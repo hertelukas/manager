@@ -4,4 +4,5 @@ namespace manager.Data;
 
 public class ManagerUser : IdentityUser
 {
+    public ICollection<Board> Boards { get; set; }
 }
