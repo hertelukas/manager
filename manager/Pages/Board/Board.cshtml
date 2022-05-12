@@ -1,0 +1,10 @@
+@page "/board/{id:int}"
+@model manager.Pages.Board.Board
+
+@{
+    ViewData["Title"] = "Board " + Model.UserBoard.Name; 
+}
+
+<div class="text-center">
+    <h1 class="display-4">Board @Model.UserBoard.Name</h1>
+</div>

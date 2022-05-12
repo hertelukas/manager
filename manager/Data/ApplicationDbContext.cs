@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace manager.Data;
 
-public class ApplicationDbContext : IdentityDbContext<ManagerUser>
+public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
