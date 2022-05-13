@@ -35,7 +35,7 @@
             <tr>
                 <th scope="row">@board.Name</th>
                 <td>
-                    <button class="btn btn-outline-dark"></button>
+                    <a asp-page="Board" asp-route-id="@board.BoardId" class="btn btn-outline-dark">Open</a>
                 </td>
             </tr>
         }

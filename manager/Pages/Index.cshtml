@@ -8,6 +8,7 @@
     <h1 class="display-4">Welcome</h1>
     @if (User.Identity is {IsAuthenticated: true})
     {
+        <a class="btn btn-primary" asp-page="/Board/Index">Your Boards</a>
     }
     else
     {
