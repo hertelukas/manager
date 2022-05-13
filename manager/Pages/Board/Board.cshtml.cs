@@ -1,10 +1,11 @@
+#nullable disable
+
 using manager.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-
-#nullable disable
+using Microsoft.EntityFrameworkCore;
 
 namespace manager.Pages.Board;
 
@@ -12,28 +13,30 @@ namespace manager.Pages.Board;
 public class Board : PageModel
 {
     public Data.Board UserBoard;
-    private UserManager<ApplicationUser> _userManager;
 
-    public Board(UserManager<ApplicationUser> userManager)
+    private ILogger<Board> _logger;
+    private UserManager<ApplicationUser> _userManager;
+    private ApplicationDbContext _context;
+
+    public Board(UserManager<ApplicationUser> userManager, ApplicationDbContext context, ILogger<Board> logger)
     {
         _userManager = userManager;
+        _context = context;
+        _logger = logger;
     }
 
     public async Task<IActionResult> OnGetAsync(int id)
     {
         var result = await _userManager.GetUserAsync(User);
 
-        // If the user has no boards yet, return
-        if (result.Boards == null)
-        {
-            return RedirectToPage("/Error");
-        }
 
-        var tmp = result.Boards.SingleOrDefault(b => b.BoardId == id);
-
+        var tmp = await _context.Boards.FirstOrDefaultAsync(
+            b => b.BoardId == id && b.ApplicationUserId == result.Id
+        );
 
         if (tmp == null)
         {
+            _logger.LogWarning("{Username} could not load Board {Id}", result.Email, id);
             return RedirectToPage("/Error");
         }
 
