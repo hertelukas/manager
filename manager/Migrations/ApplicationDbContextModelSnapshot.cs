@@ -85,9 +85,9 @@ namespace manager.Migrations
 
             modelBuilder.Entity("manager.Data.Board", b =>
                 {
-                    b.Property<int>("BoardId")
+                    b.Property<Guid>("BoardId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("char(36)");
 
                     b.Property<string>("ApplicationUserId")
                         .HasColumnType("varchar(255)");
@@ -100,6 +100,70 @@ namespace manager.Migrations
                     b.HasIndex("ApplicationUserId");
 
                     b.ToTable("Boards");
+                });
+
+            modelBuilder.Entity("manager.Data.Column", b =>
+                {
+                    b.Property<Guid>("ColumnId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<Guid?>("BoardId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("ColumnId");
+
+                    b.HasIndex("BoardId");
+
+                    b.ToTable("Columns");
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("Column");
+                });
+
+            modelBuilder.Entity("manager.Data.ColumnEntry.ColumnEntry", b =>
+                {
+                    b.Property<Guid>("ColumnEntryId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<Guid?>("RowId")
+                        .HasColumnType("char(36)");
+
+                    b.HasKey("ColumnEntryId");
+
+                    b.HasIndex("RowId");
+
+                    b.ToTable("ColumnEntries");
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("ColumnEntry");
+                });
+
+            modelBuilder.Entity("manager.Data.Row", b =>
+                {
+                    b.Property<Guid>("RowId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<Guid>("BoardId")
+                        .HasColumnType("char(36)");
+
+                    b.HasKey("RowId");
+
+                    b.HasIndex("BoardId");
+
+                    b.ToTable("Rows");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -234,11 +298,52 @@ namespace manager.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("manager.Data.ColumnEntry.TextColumnEntry", b =>
+                {
+                    b.HasBaseType("manager.Data.ColumnEntry.ColumnEntry");
+
+                    b.HasDiscriminator().HasValue("TextColumnEntry");
+                });
+
+            modelBuilder.Entity("manager.Data.TextColumn", b =>
+                {
+                    b.HasBaseType("manager.Data.Column");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasDiscriminator().HasValue("TextColumn");
+                });
+
             modelBuilder.Entity("manager.Data.Board", b =>
                 {
                     b.HasOne("manager.Data.ApplicationUser", null)
                         .WithMany("Boards")
                         .HasForeignKey("ApplicationUserId");
+                });
+
+            modelBuilder.Entity("manager.Data.Column", b =>
+                {
+                    b.HasOne("manager.Data.Board", null)
+                        .WithMany("Columns")
+                        .HasForeignKey("BoardId");
+                });
+
+            modelBuilder.Entity("manager.Data.ColumnEntry.ColumnEntry", b =>
+                {
+                    b.HasOne("manager.Data.Row", null)
+                        .WithMany("Entries")
+                        .HasForeignKey("RowId");
+                });
+
+            modelBuilder.Entity("manager.Data.Row", b =>
+                {
+                    b.HasOne("manager.Data.Board", null)
+                        .WithMany("Rows")
+                        .HasForeignKey("BoardId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -295,6 +400,18 @@ namespace manager.Migrations
             modelBuilder.Entity("manager.Data.ApplicationUser", b =>
                 {
                     b.Navigation("Boards");
+                });
+
+            modelBuilder.Entity("manager.Data.Board", b =>
+                {
+                    b.Navigation("Columns");
+
+                    b.Navigation("Rows");
+                });
+
+            modelBuilder.Entity("manager.Data.Row", b =>
+                {
+                    b.Navigation("Entries");
                 });
 #pragma warning restore 612, 618
         }

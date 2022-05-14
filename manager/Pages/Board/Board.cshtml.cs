@@ -25,13 +25,13 @@ public class Board : PageModel
         _logger = logger;
     }
 
-    public async Task<IActionResult> OnGetAsync(int id)
+    public async Task<IActionResult> OnGetAsync(string id)
     {
         var result = await _userManager.GetUserAsync(User);
 
 
         var tmp = await _context.Boards.FirstOrDefaultAsync(
-            b => b.BoardId == id && b.ApplicationUserId == result.Id
+            b => b.BoardId == Guid.Parse(id) && b.ApplicationUserId == result.Id
         );
 
         if (tmp == null)
