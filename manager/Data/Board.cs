@@ -26,5 +26,6 @@ public class Board
 
     public void AddRow(string name)
     {
+        Rows.Add(new Row(name));
     }
 }
