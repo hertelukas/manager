@@ -30,9 +30,13 @@ public class Board : PageModel
         var result = await _userManager.GetUserAsync(User);
 
 
-        var tmp = await _context.Boards.FirstOrDefaultAsync(
-            b => b.BoardId == Guid.Parse(id) && b.ApplicationUserId == result.Id
-        );
+        var tmp = await _context
+            .Boards
+            .Include(b => b.Columns)
+            .Include(b => b.Rows)
+            .FirstOrDefaultAsync(
+                b => b.BoardId == Guid.Parse(id) && b.ApplicationUserId == result.Id
+            );
 
         if (tmp == null)
         {

@@ -2,9 +2,50 @@
 @model manager.Pages.Board.Board
 
 @{
-    ViewData["Title"] = "Board " + Model.UserBoard.Name; 
+    ViewData["Title"] = "Board " + Model.UserBoard.Name;
 }
 
 <div class="text-center">
     <h1 class="display-4">Board @Model.UserBoard.Name</h1>
 </div>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th scope="col">Name</th>
+        @if (Model.UserBoard.Columns != null)
+        {
+            @foreach (var column in Model.UserBoard.Columns)
+            {
+                <th scope="col">@column.Name</th>
+            }
+        }
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>
+            <input type="text" id="RowName" class="form-control">
+        </td>
+        <td>
+            <button id="Create" class="btn btn-outline-dark">Create</button>
+        </td>
+    </tr>
+    @if (Model.UserBoard.Rows != null)
+    {
+        @foreach (var row in Model.UserBoard.Rows)
+        {
+            <tr>
+                <th scope="row">@row.Name</th>
+            </tr>
+        }
+    }
+    </tbody>
+</table>
+
+<script>
+const board = "@Model.UserBoard.BoardId";
+</script>
+
+<script src="~/js/signalr/dist/browser/signalr.js"></script>
+<script src="~/js/board.js"></script>
