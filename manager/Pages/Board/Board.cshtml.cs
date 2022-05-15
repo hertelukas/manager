@@ -33,19 +33,26 @@ public class Board : PageModel
     {
         var result = await _userManager.GetUserAsync(User);
 
+        if (!Guid.TryParse(id, out var guid))
+        {
+            ErrorMessage = JsonConvert.SerializeObject(
+                new NotificationModel(NotificationModel.Level.Danger, "This link is invalid"));
+
+            return RedirectToPage("/Board/Index");
+        }
 
         var tmp = await _context
             .Boards
             .Include(b => b.Columns)
             .Include(b => b.Rows)
             .FirstOrDefaultAsync(
-                b => b.BoardId == Guid.Parse(id) && b.ApplicationUserId == result.Id
+                b => b.BoardId == guid && b.ApplicationUserId == result.Id
             );
 
         if (tmp == null)
         {
             ErrorMessage = JsonConvert.SerializeObject(
-                new NotificationModel(NotificationModel.Level.Warning, "Could not find your board")
+                new NotificationModel(NotificationModel.Level.Danger, "Could not find your board")
             );
 
             _logger.LogWarning("{Username} could not load Board {Id}", result.Email, id);
