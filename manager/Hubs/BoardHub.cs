@@ -1,4 +1,5 @@
 using manager.Data;
+using manager.Pages.Shared;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
@@ -20,13 +21,19 @@ public class BoardHub : Hub
         _userManager = userManager;
     }
 
-    public async Task ReceiveAddRow(string id, string name)
+    public async Task ReceiveAddRow(string id, string? name)
     {
+        if (string.IsNullOrEmpty(name))
+        {
+            await SendNotification(Context.ConnectionId, NotificationModel.Level.Danger, "Row has to have a name");
+            return;
+        }
+
         var user = await _userManager.GetUserAsync(Context.User);
 
         if (user == null)
         {
-            _logger.LogWarning("Could not find user {User} while creating new row", Context.User);
+            _logger.LogWarning("Could not find user while creating new row");
             return;
         }
 
@@ -41,6 +48,16 @@ public class BoardHub : Hub
 
         board.AddRow(name);
         await _context.SaveChangesAsync();
+    }
+
+    #endregion
+
+    #region Send
+
+    private async Task SendNotification(string receiveId, NotificationModel.Level level, string message)
+    {
+        _logger.LogInformation("Sending \"{Message}\" to {User} with level {Level}", message, receiveId, level);
+        await Clients.Client(receiveId).SendAsync("Notification", level.ToString().ToLower(), message);
     }
 
     #endregion

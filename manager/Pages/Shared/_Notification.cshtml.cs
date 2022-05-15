@@ -1,5 +1,3 @@
-using Microsoft.AspNetCore.Mvc.RazorPages;
-
 namespace manager.Pages.Shared;
 
 public class NotificationModel

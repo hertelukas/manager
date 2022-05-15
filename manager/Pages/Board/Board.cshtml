@@ -7,13 +7,14 @@
 @{
     ViewData["Title"] = "Board " + Model.UserBoard.Name;
 }
-
-@if (TempData["ErrorMessage"] != null)
-{
-    <partial
-        name="Shared/_Notification"
-        model='@(JsonConvert.DeserializeObject<NotificationModel>(TempData["ErrorMessage"]?.ToString() ?? string.Empty))'/>
-}
+<div id="alert-placeholder">
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <partial
+            name="Shared/_Notification"
+            model='@(JsonConvert.DeserializeObject<NotificationModel>(TempData["ErrorMessage"]?.ToString() ?? string.Empty))'/>
+    }
+</div>
 <div class="text-center">
     <h1 class="display-4">Board @Model.UserBoard.Name</h1>
 </div>
