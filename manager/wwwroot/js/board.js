@@ -12,6 +12,9 @@ connection.start().then(function () {
 connection.on("Notification", function (level, message) {
     showNotification(level, message);
 });
+connection.on("RowUpdate", function (index, row) {
+    updateRow(index, row);
+});
 
 document.getElementById("Create").addEventListener("click", function () {
     connection.invoke(
@@ -21,12 +24,12 @@ document.getElementById("Create").addEventListener("click", function () {
     ).catch(function (err) {
         return console.error(err.toString());
     });
+    document.getElementById("RowName").value = "";
 });
 
 let alertPlaceHolder = document.getElementById("alert-placeholder");
 
 function showNotification(level, text) {
-    console.log("gay");
     let alert = document.createElement("div");
 
     alert.className = `alert alert-${level} alert-dismissible`;
@@ -42,4 +45,24 @@ function showNotification(level, text) {
     alert.innerHTML += text;
 
     alertPlaceHolder.appendChild(alert);
+}
+
+let rows = document.getElementById("rows");
+
+function updateRow(index, row) {
+    console.log(row);
+    console.log(`Index: ${index}, length: ${rows.childElementCount}`);
+
+    if (index >= rows.childElementCount) {
+        console.log("Adding row...")
+        let tr = document.createElement("tr");
+
+        let th = document.createElement("th");
+        th.setAttribute("scope", "row");
+        th.innerText = row.name;
+
+        tr.appendChild(th);
+
+        rows.appendChild(tr);
+    }
 }

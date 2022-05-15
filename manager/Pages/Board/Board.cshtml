@@ -32,15 +32,7 @@
         }
     </tr>
     </thead>
-    <tbody>
-    <tr>
-        <td>
-            <input type="text" id="RowName" class="form-control">
-        </td>
-        <td>
-            <button id="Create" class="btn btn-outline-dark">Create</button>
-        </td>
-    </tr>
+    <tbody id="rows">
     @if (Model.UserBoard.Rows != null)
     {
         @foreach (var row in Model.UserBoard.Rows)
@@ -51,6 +43,16 @@
         }
     }
     </tbody>
+    <tfoot>
+    <tr>
+        <td>
+            <input type="text" id="RowName" class="form-control">
+        </td>
+        <td>
+            <button id="Create" class="btn btn-outline-dark">Create</button>
+        </td>
+    </tr>
+    </tfoot>
 </table>
 
 <script>

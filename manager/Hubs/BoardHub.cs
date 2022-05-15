@@ -25,7 +25,7 @@ public class BoardHub : Hub
     {
         if (string.IsNullOrEmpty(name))
         {
-            await SendNotification(Context.ConnectionId, NotificationModel.Level.Danger, "Row has to have a name");
+            await SendNotificationAsync(Context.ConnectionId, NotificationModel.Level.Danger, "Row has to have a name");
             return;
         }
 
@@ -48,16 +48,28 @@ public class BoardHub : Hub
 
         board.AddRow(name);
         await _context.SaveChangesAsync();
+        await SendRowUpdateAsync(Context.ConnectionId, board.Rows.Count - 1, board.Rows[^1]);
     }
 
     #endregion
 
     #region Send
 
-    private async Task SendNotification(string receiveId, NotificationModel.Level level, string message)
+    private async Task SendNotificationAsync(string connectionId, NotificationModel.Level level, string message)
     {
-        _logger.LogInformation("Sending \"{Message}\" to {User} with level {Level}", message, receiveId, level);
-        await Clients.Client(receiveId).SendAsync("Notification", level.ToString().ToLower(), message);
+        _logger.LogInformation(
+            "Sending \"{Message}\" to {Connection} with level {Level}",
+            message,
+            connectionId,
+            level);
+
+        await Clients.Client(connectionId).SendAsync("Notification", level.ToString().ToLower(), message);
+    }
+
+    private async Task SendRowUpdateAsync(string connectionId, int rowIndex, Row row)
+    {
+        _logger.LogInformation("Sending row {Index} update to {Connection}", rowIndex, connectionId);
+        await Clients.Client(connectionId).SendAsync("RowUpdate", rowIndex, row);
     }
 
     #endregion

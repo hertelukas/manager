@@ -8,9 +8,9 @@ public class Board
     public string ApplicationUserId { get; set; }
     public string Name { get; set; }
 
-    public ICollection<Column> Columns { get; set; }
+    public IList<Column> Columns { get; set; }
 
-    public ICollection<Row> Rows { get; set; }
+    public IList<Row> Rows { get; set; }
 
     public void AddColumn(ColumnType type, string name)
     {
