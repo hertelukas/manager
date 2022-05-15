@@ -1,10 +1,19 @@
 @page "/board/{id}"
+@using Newtonsoft.Json
+@using manager.Pages.Shared
+@using Microsoft.AspNetCore.Mvc.TagHelpers
 @model manager.Pages.Board.Board
 
 @{
     ViewData["Title"] = "Board " + Model.UserBoard.Name;
 }
 
+@if (TempData["ErrorMessage"] != null)
+{
+    <partial
+        name="Shared/_Notification"
+        model='@(JsonConvert.DeserializeObject<NotificationModel>(TempData["ErrorMessage"]?.ToString() ?? string.Empty))'/>
+}
 <div class="text-center">
     <h1 class="display-4">Board @Model.UserBoard.Name</h1>
 </div>

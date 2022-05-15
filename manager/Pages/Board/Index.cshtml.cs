@@ -19,6 +19,8 @@ public class Index : PageModel
 
     [BindProperty] [Required] public string Name { get; set; }
 
+    [TempData] public string ErrorMessage { get; set; }
+
     public Index(UserManager<ApplicationUser> userManager, ILogger<Index> logger, ApplicationDbContext context)
     {
         _userManager = userManager;

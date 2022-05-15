@@ -1,11 +1,13 @@
 #nullable disable
 
 using manager.Data;
+using manager.Pages.Shared;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace manager.Pages.Board;
 
@@ -13,6 +15,8 @@ namespace manager.Pages.Board;
 public class Board : PageModel
 {
     public Data.Board UserBoard;
+
+    [TempData] public string ErrorMessage { get; set; }
 
     private ILogger<Board> _logger;
     private UserManager<ApplicationUser> _userManager;
@@ -40,8 +44,12 @@ public class Board : PageModel
 
         if (tmp == null)
         {
+            ErrorMessage = JsonConvert.SerializeObject(
+                new NotificationModel(NotificationModel.Level.Warning, "Could not find your board")
+            );
+
             _logger.LogWarning("{Username} could not load Board {Id}", result.Email, id);
-            return RedirectToPage("/Error");
+            return RedirectToPage("/Board/Index");
         }
 
         UserBoard = tmp;
