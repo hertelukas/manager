@@ -1,6 +1,5 @@
 "use strict"
 
-
 const connection = new signalR.HubConnectionBuilder().withUrl("/boardHub").build();
 
 connection.start().then(function () {
@@ -9,23 +8,23 @@ connection.start().then(function () {
     return console.error(err.toString());
 });
 
-connection.on("Notification", function (level, message) {
-    showNotification(level, message);
-});
-connection.on("RowUpdate", function (index, row) {
-    updateRow(index, row);
+connection.on("Notification", (level, message) => showNotification(level, message));
+connection.on("RowUpdate", (index, row) => updateRow(index, row));
+
+document.getElementById("Create").addEventListener("click", () => handleCreate());
+
+document.getElementById("RowName").addEventListener("keydown", (e) => {
+    if (e.code === "Enter") {
+        handleCreate();
+    }
 });
 
-document.getElementById("Create").addEventListener("click", function () {
-    connection.invoke(
-        "ReceiveAddRow",
-        board,
-        document.getElementById("RowName").value
-    ).catch(function (err) {
+function handleCreate() {
+    connection.invoke("ReceiveAddRow", board, document.getElementById("RowName").value).catch(function (err) {
         return console.error(err.toString());
     });
     document.getElementById("RowName").value = "";
-});
+}
 
 let alertPlaceHolder = document.getElementById("alert-placeholder");
 
