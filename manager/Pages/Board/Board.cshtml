@@ -30,6 +30,21 @@
                 <th scope="col">@column.Name</th>
             }
         }
+        <th scope="col">
+            <div class="input-group">
+                <input type="text" class="form-control" id="columnName">
+                <button class="dropdown-toggle btn btn-outline-dark" type="button" data-bs-toggle="dropdown" aria-expanded="False">Type</button>
+                <ul class="dropdown-menu">
+                    @foreach (var type in Enum.GetValues<ColumnType>())
+                    {
+                        <li>
+                            <button class="dropdown-item" id="select-@type">@type.ToString()</button>
+                        </li>
+                    }
+                </ul>
+                <button class="form-control btn btn-outline-dark">Add</button>
+            </div>
+        </th>
     </tr>
     </thead>
     <tbody id="rows">
@@ -45,11 +60,11 @@
     </tbody>
     <tfoot>
     <tr>
-        <td>
-            <input type="text" id="RowName" class="form-control">
-        </td>
-        <td>
-            <button id="Create" class="btn btn-outline-dark">Create</button>
+        <td colspan="100%">
+            <div class="input-group">
+                <input type="text" id="RowName" class="form-control">
+                <button id="Create" class="btn btn-outline-dark">Create</button>
+            </div>
         </td>
     </tr>
     </tfoot>
