@@ -51,6 +51,35 @@ public class BoardHub : Hub
         await SendRowUpdateAsync(Context.ConnectionId, board.Rows.Count - 1, board.Rows[^1]);
     }
 
+    public async Task ReceiveAddColumn(string id, ColumnType type, string? name)
+    {
+        if (string.IsNullOrEmpty(name))
+        {
+            await SendNotificationAsync(Context.ConnectionId, NotificationModel.Level.Danger,
+                "Column has to have a name");
+            return;
+        }
+
+        var user = await _userManager.GetUserAsync(Context.User);
+
+        if (user == null)
+        {
+            _logger.LogWarning("Could not find user while create a new column");
+            return;
+        }
+
+        var board = await _context.Boards.Include(b => b.Columns)
+            .FirstOrDefaultAsync(b => b.BoardId.Equals(Guid.Parse(id)));
+
+        if (board == null || !user.Boards.Contains(board))
+        {
+            _logger.LogWarning("{Username} has no access to the board {BoardId}", user.Email, id);
+            return;
+        }
+
+        board.AddColumn(type, name);
+    }
+
     #endregion
 
     #region Send
